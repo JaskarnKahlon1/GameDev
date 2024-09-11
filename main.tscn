@@ -1,0 +1,120 @@
+[gd_scene load_steps=14 format=3 uid="uid://dlcsl2b4tiuu5"]
+
+[ext_resource type="Script" path="res://camera_2d.gd" id="1_jv2qr"]
+[ext_resource type="Script" path="res://Actors/ball.gd" id="1_q7xo7"]
+[ext_resource type="Script" path="res://Actors/paddle.gd" id="2_a6fvk"]
+[ext_resource type="PackedScene" uid="uid://bky660vw4blfu" path="res://Actors/brick.tscn" id="3_p5lpf"]
+[ext_resource type="Script" path="res://brick_manager.gd" id="3_tyfe8"]
+[ext_resource type="PackedScene" uid="uid://cgp3pnk7dinex" path="res://Actors/slow_mo.tscn" id="5_d83il"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_bam4x"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_60wnu"]
+size = Vector2(40, 40)
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_tlp0f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eber4"]
+size = Vector2(100, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8ik22"]
+size = Vector2(1149, 39)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dq2fv"]
+size = Vector2(20, 661)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7liwj"]
+size = Vector2(2036, 44)
+
+[node name="Main" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(575, 330)
+script = ExtResource("1_jv2qr")
+
+[node name="Ball" type="CharacterBody2D" parent="." node_paths=PackedStringArray("score_label", "start_text")]
+visible = false
+position = Vector2(570, 419)
+motion_mode = 1
+script = ExtResource("1_q7xo7")
+score_label = NodePath("../Score")
+start_text = NodePath("../StartText")
+
+[node name="Sprite2D" type="Sprite2D" parent="Ball"]
+scale = Vector2(40, 40)
+texture = SubResource("CanvasTexture_bam4x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
+shape = SubResource("RectangleShape2D_60wnu")
+
+[node name="SlowMo" type="Timer" parent="Ball"]
+wait_time = 5.0
+one_shot = true
+
+[node name="Paddle" type="CharacterBody2D" parent="." groups=["Paddle"]]
+position = Vector2(695, 579)
+motion_mode = 1
+script = ExtResource("2_a6fvk")
+
+[node name="Sprite2D" type="Sprite2D" parent="Paddle"]
+scale = Vector2(100, 40)
+texture = SubResource("CanvasTexture_tlp0f")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paddle"]
+shape = SubResource("RectangleShape2D_eber4")
+
+[node name="Left_wall3" type="StaticBody2D" parent="."]
+position = Vector2(296, -351)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Left_wall3"]
+position = Vector2(280.5, 330.5)
+shape = SubResource("RectangleShape2D_8ik22")
+
+[node name="Left_wall2" type="StaticBody2D" parent="."]
+position = Vector2(1178, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Left_wall2"]
+position = Vector2(-13, 321)
+shape = SubResource("RectangleShape2D_dq2fv")
+
+[node name="Left_wall" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Left_wall"]
+position = Vector2(-13, 321)
+shape = SubResource("RectangleShape2D_dq2fv")
+
+[node name="Score" type="RichTextLabel" parent="."]
+offset_left = 931.0
+offset_top = 590.0
+offset_right = 1508.0
+offset_bottom = 687.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 40
+text = "SCORE: 0"
+
+[node name="StartText" type="RichTextLabel" parent="."]
+offset_left = 417.0
+offset_top = 388.0
+offset_right = 752.0
+offset_bottom = 483.0
+theme_override_font_sizes/normal_font_size = 40
+text = "[CLICK TO START]"
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="GameOver" type="StaticBody2D" parent="." groups=["GameOver"]]
+position = Vector2(539, 697)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GameOver"]
+shape = SubResource("RectangleShape2D_7liwj")
+
+[node name="BrickManager" type="Node2D" parent="."]
+script = ExtResource("3_tyfe8")
+brick_scene = ExtResource("3_p5lpf")
+
+[node name="SlowMo" parent="." instance=ExtResource("5_d83il")]
+position = Vector2(832, 418)
+
+[connection signal="timeout" from="Ball/SlowMo" to="Ball" method="_on_slow_mo_timeout"]
